@@ -1,101 +1,129 @@
 // №1
-const counter = {};
-const counter1 = Object.create(null);
-const counter3 = Object.assign({}, {});
 
-// №2
-const copyObj = () => {
-  const obj1 = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 };
-  const obj2 = {};
+// Алгоритмы:
+// Алгоритм Дейкстры
+// Дерево
 
-  for (const key in obj1) {
-    if (Object.hasOwnProperty.call(obj1, key)) {
-      const element = obj1[key];
-      obj2[key] = element;
-    }
-  }
-  return obj2;
-};
-copyObj();
+// Поиск:
+// Линейный поиск O(n)
+// Бинарный поиск O(log2n)
+// Поиск в ширину
 
-const copyObjv2 = () => {
-  const obj1 = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 };
-  const obj2 = {};
-
-  Object.assign(obj2, obj1);
-  console.log(obj2);
-  return obj2;
-};
-copyObjv2();
+// Сортировки:
+// Сортировка пузырьком O(n^2)
+// Сортировка выбором O(n^2)
+// Быстрая сортировка O(log2n * n)
+// Рекурсия
 
 // №3
 
-function makeCounter() {}
+const Person = {
+  name: 'Katua',
+  age: 22,
+  logInfo: function () {
+    console.log(`My name is ${this.name}, i'm ${this.age} y.o.`);
+  },
+};
+Object.create(Person);
 
-const makeCounter = () => {};
+// function Person(name, age) {
+//   this.name = name;
+//   this.age = age;
+// }
 
-const makeCounter = function () {};
+// let kat = new Person('Katua', 22);
 
-const makeCounter = function newMakeCounter() {};
+const Person2 = {};
+Object.assign(Person2, Person);
+Person2.logInfo(); // My name is Katua, i'm 22 y.o.
 
-// Bonus #1
-// Написать функцию глубокого сравнения двух объектов:
+// №4
 
-const obj1 = { here: { is: 'on', other: '3' }, object: 'Y' };
-const obj2 = { here: { is: 'on', other: '2' }, object: 'Y' };
-
-const deepEqual = (obj1, obj2) => {
-  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
-    return obj1 === obj2;
+class PersonThree {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
   }
 
-  if (obj1 === null && obj2 === null) {
-    return true;
+  set setName(name) {
+    this.name = name;
   }
 
-  if (obj1 === null || obj2 === null) {
-    return false;
+  set setAge(age) {
+    this.age = age;
   }
 
-  if (Object.keys(obj1).length !== Object.keys(obj2).length) {
-    return false;
+  get getName() {
+    return this.name;
   }
 
-  for (let key of Object.keys(obj1)) {
-    if (!Object.keys(obj2).includes(key)) {
-      return false;
+  get getAge() {
+    return this.age;
+  }
+}
+
+class PersonChild extends PersonThree {
+  constructor(name, age, weight, height) {
+    super(name, age);
+    this.weight = weight;
+    this.height = height;
+  }
+
+  set setWeight(weight) {
+    this.weight = weight;
+  }
+  set setHeight(height) {
+    this.height = height;
+  }
+
+  get getWeight() {
+    return this.weight;
+  }
+
+  get getHeight() {
+    return this.height;
+  }
+}
+
+const katua = new PersonChild('katua', 22, 49, 173);
+console.log(katua.getAge, katua.getHeight); // 22 173
+
+const notKatua = new PersonThree('notKatua', 0);
+console.log(notKatua.getAge, notKatua.getHeight); // 0 undefined, т.к у класса родителя нет методов класса наследника
+
+// №5
+
+arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+total = 13;
+
+// O^2
+const firstSum = (arr, total) => {
+  let result = [];
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 1; j < arr.length; j++) {
+      if (arr[i] + arr[j] === total) {
+        console.log(arr[i], arr[j]); // 4, 9
+        return (result = [arr[i], arr[j]]);
+      }
     }
-
-    if (!deepEqual(obj1[key], obj2[key])) {
-      return false;
-    }
   }
-
-  return true;
 };
 
-// Bonus #2
-// Развернуть строку в обратном направлении при помощи методов массивов:
-
-function reverseStr(str) {
-  let arr = [];
-  for (let i = 0; i < str.length; i++) {
-    arr.unshift(str[i]);
+// O(n)
+const firstSumAnotherMethod = (arr, total) => {
+  let result = [];
+  let set = new Set(arr);
+  for (let i = 0; i < arr.length; i++) {
+    let complement = total - arr[i];
+    if (set.has(complement)) {
+      result.push(arr[i]);
+      result.push(complement);
+      console.log(result); // 4, 9
+      return result;
+    }
   }
-  return arr.join('');
-}
-reverseStr('Привет');
+  return result;
+};
 
-function reverseStr2(str) {
-  let arr = [];
-  for (let i = 0; i < str.length; i++) {
-    arr.push(str[i]);
-  }
-  return arr.reverse().join('');
-}
-reverseStr2('Привет');
-
-function reverseStr3(str) {
-  return str.split('').reverse().join('');
-}
-reverseStr3('Привет');
+firstSum(arr, total);
+firstSumAnotherMethod(arr, total);
