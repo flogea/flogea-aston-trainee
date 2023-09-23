@@ -1,129 +1,90 @@
 // №1
 
-// Алгоритмы:
-// Алгоритм Дейкстры
-// Дерево
+let promiseTwo = new Promise((resolve, reject) => {
+  resolve('a');
+});
 
-// Поиск:
-// Линейный поиск O(n)
-// Бинарный поиск O(log2n)
-// Поиск в ширину
+promiseTwo
+  .then((res) => {
+    return res + 'b'; // 'ab'
+  })
+  .then((res) => {
+    return res + 'с'; // 'abc'
+  })
+  .finally((res) => {
+    return res + '!!!!!!!'; // 'abc!!!!!!!'
+  })
+  .catch((res) => {
+    return res + 'd';
+  })
+  .then((res) => {
+    console.log(res); //
+  });
 
-// Сортировки:
-// Сортировка пузырьком O(n^2)
-// Сортировка выбором O(n^2)
-// Быстрая сортировка O(log2n * n)
-// Рекурсия
+// №2
+
+function doSmth() {
+  return Promise.resolve('123');
+}
+
+doSmth()
+  .then(function (a) {
+    console.log('1', a); // 1 123
+    return a;
+  })
+  .then(function (b) {
+    console.log('2', b); // 2 123
+    return Promise.reject('321');
+  })
+  .catch(function (err) {
+    console.log('3', err); // 3 321
+  })
+  .then(function (c) {
+    console.log('4', c); // 4 undefined
+    return c;
+  });
 
 // №3
 
-const Person = {
-  name: 'Katua',
-  age: 22,
-  logInfo: function () {
-    console.log(`My name is ${this.name}, i'm ${this.age} y.o.`);
-  },
+const arr = [10, 12, 15, 21];
+
+const showIndex = () => {
+  for (let i = 0; i < arr.length; i++) {
+    setTimeout(() => {
+      console.log(i);
+    }, 3000 * i);
+  }
 };
-Object.create(Person);
-
-// function Person(name, age) {
-//   this.name = name;
-//   this.age = age;
-// }
-
-// let kat = new Person('Katua', 22);
-
-const Person2 = {};
-Object.assign(Person2, Person);
-Person2.logInfo(); // My name is Katua, i'm 22 y.o.
+showIndex();
 
 // №4
 
-class PersonThree {
-  constructor(name, age) {
-    this.name = name;
-    this.age = age;
-  }
+function fetchURL(url) {
+  let attempts = 5;
+  console.log('waiting..');
 
-  set setName(name) {
-    this.name = name;
-  }
-
-  set setAge(age) {
-    this.age = age;
-  }
-
-  get getName() {
-    return this.name;
-  }
-
-  get getAge() {
-    return this.age;
-  }
+  return new Promise((resolve, reject) => {
+    const makeRequest = () => {
+      fetch(url)
+        .then((response) => {
+          if (response.ok) {
+            resolve(response.text());
+          } else {
+            throw new Error('error');
+          }
+        })
+        .catch((error) => {
+          attempts--;
+          if (attempts === 0) {
+            reject(error);
+          } else {
+            console.log(`${attempts} attempts left`);
+            setTimeout(makeRequest, 3000);
+          }
+        });
+    };
+    makeRequest();
+  });
 }
 
-class PersonChild extends PersonThree {
-  constructor(name, age, weight, height) {
-    super(name, age);
-    this.weight = weight;
-    this.height = height;
-  }
-
-  set setWeight(weight) {
-    this.weight = weight;
-  }
-  set setHeight(height) {
-    this.height = height;
-  }
-
-  get getWeight() {
-    return this.weight;
-  }
-
-  get getHeight() {
-    return this.height;
-  }
-}
-
-const katua = new PersonChild('katua', 22, 49, 173);
-console.log(katua.getAge, katua.getHeight); // 22 173
-
-const notKatua = new PersonThree('notKatua', 0);
-console.log(notKatua.getAge, notKatua.getHeight); // 0 undefined, т.к у класса родителя нет методов класса наследника
-
-// №5
-
-arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-total = 13;
-
-// O^2
-const firstSum = (arr, total) => {
-  let result = [];
-  for (let i = 0; i < arr.length; i++) {
-    for (let j = 1; j < arr.length; j++) {
-      if (arr[i] + arr[j] === total) {
-        console.log(arr[i], arr[j]); // 4, 9
-        return (result = [arr[i], arr[j]]);
-      }
-    }
-  }
-};
-
-// O(n)
-const firstSumAnotherMethod = (arr, total) => {
-  let result = [];
-  let set = new Set(arr);
-  for (let i = 0; i < arr.length; i++) {
-    let complement = total - arr[i];
-    if (set.has(complement)) {
-      result.push(arr[i]);
-      result.push(complement);
-      console.log(result); // 4, 9
-      return result;
-    }
-  }
-  return result;
-};
-
-firstSum(arr, total);
-firstSumAnotherMethod(arr, total);
+fetchURL('https://google/com&#39');
